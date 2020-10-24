@@ -340,6 +340,11 @@ Settings
 .Targets_x64Linux_Release = {}
 .Targets_x64Linux_ASan = {}
 .Targets_x64Linux_TSan = {}
+.Targets_arm64Linux_Debug = {}
+.Targets_arm64Linux_Profile = {}
+.Targets_arm64Linux_Release = {}
+.Targets_arm64Linux_ASan = {}
+.Targets_arm64Linux_TSan = {}
 .Targets_x64ClangLinux_Debug = {}
 .Targets_x64ClangLinux_Profile = {}
 .Targets_x64ClangLinux_Release = {}
@@ -395,10 +400,11 @@ Alias( 'Exes' )
 
 // Aliases : All-$Platform$
 //------------------------------------------------------------------------------
-.Platforms = { 'x64', 'x64Clang', 'x64Linux', 'x64ClangLinux', 'x64OSX', 'ARMOSX' }
+.Platforms = { 'x64', 'x64Clang', 'x64Linux', 'arm64Linux', 'x64ClangLinux', 'x64OSX', 'ARMOSX' }
 .PlatformConfigs_x64           = { 'Debug', 'Analyze', 'Profile', 'Release' }
 .PlatformConfigs_x64Clang      = { 'Debug', 'Profile', 'Release' }
 .PlatformConfigs_x64Linux      = { 'Debug', 'Profile', 'Release', 'ASan', 'TSan' }
+.PlatformConfigs_arm64Linux      = { 'Debug', 'Profile', 'Release', 'ASan', 'TSan' }
 .PlatformConfigs_x64ClangLinux = { 'Debug', 'Profile', 'Release' }
 #if USING_CLANG_6
                                + { 'ASan', 'MSan', 'TSan' }
@@ -437,12 +443,19 @@ ForEach( .Platform in .Platforms )
     }
 #endif
 #if __LINUX__
+#if __ARM64__
+    Alias( 'All' )
+    {
+        .Targets        = { 'All-arm64Linux', }
+    }
+#else
     Alias( 'All' )
     {
         .Targets        = { 'All-x64Linux',
                             'All-x64ClangLinux'
                           }
     }
+#endif
 #endif
 
 // Aliases : Tests

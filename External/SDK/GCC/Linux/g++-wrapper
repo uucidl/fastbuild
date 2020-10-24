@@ -1,0 +1,7 @@
+#!/bin/bash
+# wrapper that sets LD_LIBRARY_PATH to the current directory, which
+# allows looking up the dynamic libraries in a different location.
+#
+# this makes distribution of gcc binaries possible to remote workers
+# without the toolchain.
+LD_LIBRARY_PATH=. aarch64-linux-gnu-g++-8 "$@"

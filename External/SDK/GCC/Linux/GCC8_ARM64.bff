@@ -1,0 +1,77 @@
+// GCC 8.3.0
+//------------------------------------------------------------------------------
+.GCC8_BasePath = '/usr/bin'
+
+// Compiler
+//------------------------------------------------------------------------------
+Compiler( 'Compiler-GCC8-Aarch64' )
+{
+    .Executable                     = '../External/SDK/GCC/Linux/g++-wrapper'
+    .ExtraFiles                     = {
+    				        '$GCC8_BasePath$/aarch64-linux-gnu-g++-8'
+                                        '/usr/bin/as'
+                                        '/usr/lib/gcc/aarch64-linux-gnu/8/cc1'
+                                        '/usr/lib/gcc/aarch64-linux-gnu/8/cc1plus'
+		                        '/lib/aarch64-linux-gnu/libm.so.6'
+					'/lib/aarch64-linux-gnu/libc.so.6'
+					'/usr/lib/aarch64-linux-gnu/libisl.so.19'
+					'/usr/lib/aarch64-linux-gnu/libmpc.so.3'
+					'/usr/lib/aarch64-linux-gnu/libmpfr.so.6'
+					'/usr/lib/aarch64-linux-gnu/libgmp.so.10'
+					'/lib/aarch64-linux-gnu/libdl.so.2'
+					'/lib/aarch64-linux-gnu/libz.so.1'
+					'/usr/lib/aarch64-linux-gnu/libopcodes-2.31.1-system.so'
+					'/usr/lib/aarch64-linux-gnu/libbfd-2.31.1-system.so'
+                                      }
+    .CompilerFamily                 = 'gcc' // TODO: Remove when FASTBuild detection is improved
+
+    // Allow tests to activate some experimental behavior
+    #if ENABLE_SOURCE_MAPPING
+        .SourceMapping_Experimental = '/fastbuild-test-mapping'
+    #endif
+}
+
+// ToolChain
+//------------------------------------------------------------------------------
+.ToolChain_GCC_Linux =
+[
+    .Platform                       = 'arm64Linux'
+
+    // Compiler Options
+    .Compiler                       = 'Compiler-GCC8-Aarch64'
+    .CommonCompilerOptions          = ' -o "%2" "%1"'   // Input/Output
+                                    + ' -c'             // Compile only
+                                    + ' -g'             // Generate debug info
+                                    + ' -march=armv8-a'           // aarch64
+                                    + ' -D__ARM64__ -D__LINUX__'    // Platform define
+                                    + ' -ffreestanding' // prevent extra magic includes like stdc-predefs.h
+
+                                    // Include paths
+                                    + ' -I./'
+
+                                    // Enable warnings
+                                    + ' -Wall -Werror -Wfatal-errors'   // warnings as errors
+                                    + ' -Wextra'
+                                    + ' -Wshadow'
+
+    .CompilerOptions                = ' -std=c++11 $CommonCompilerOptions$'
+                                    + ' -Wno-invalid-offsetof' // we get the offset of members in non-POD types
+    .CompilerOptionsC               = ' -x c $CommonCompilerOptions$'
+
+    // Librarian
+    .Librarian                      = '$GCC8_BasePath$/aarch64-linux-gnu-ar'
+    .LibrarianOptions               = 'rcs "%2" "%1"'
+
+    // Linker
+    .Linker                         = '$GCC8_BasePath$/aarch64-linux-gnu-g++-8'
+    .LinkerOptions                  = '"%1" -o "%2"'
+
+    // File Extensions
+    .LibExtension                   = '.a'
+    .ExeExtension                   = ''
+
+    // Exception Control
+    .UseExceptions                  = ' -fexceptions'
+]
+
+//------------------------------------------------------------------------------

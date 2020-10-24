@@ -6,7 +6,11 @@
 #if __LINUX__
     //#define USING_GCC_4
     //#define USING_GCC_7
-    #define USING_GCC_9
+    #if __ARM64__
+        #define USING_GCC8_ARM64
+    #else
+        #define USING_GCC_9
+    #endif
 #endif
 
 // Activate
@@ -20,6 +24,9 @@
         #endif
         #if USING_GCC_7
             #include "Linux/GCC7.bff"
+        #endif
+        #if USING_GCC8_ARM64
+                #include "Linux/GCC8_ARM64.bff"
         #endif
         #if USING_GCC_9
             #include "Linux/GCC9.bff"
